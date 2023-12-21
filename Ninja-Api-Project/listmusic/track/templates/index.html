@@ -1,11 +1,116 @@
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 </head>
 <body>
-    <h1>Anasayfa</h1>
+    <div class="container">
+        <div class="row">
+            <h1 class="text-center">Şarkılar</h1>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addtrack">Şarkı Ekle</button>
+            {% for track in tracks %}
+                <div class="col mt-5">
+                    <div class="card" style="width: 100%;">
+                        <div class="card-body">
+                          <h5 class="card-title">Şarkı Adı:{{ track.title }}</h5>
+                          <p class="card-text">Sanatçı: {{ track.artist }}</p>
+                          <p class="card-text">Süre: {{ track.duration }}</p>
+                          <p class="card-text">Son Dinleme: {{ track.last_play }}</p>
+                          <div class="d-flex justify-content-between align-items-center">
+                            <form method="GET">
+                              <input type="hidden" name="trackid" value="{{ track.id }}">
+                              <button type="submit" class="btn btn-danger">Sil</button>
+                            </form>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updatetrack{{ track.id }}">Güncelle</button>
+                          </div>
+                        </div>
+                      </div>
+                </div>
+                <!-- Şarkı Güncellem Modal -->
+  <form method="post">
+    {% csrf_token %}
+    <div class="modal fade" id="updatetrack{{ track.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">Şarkıyı Güncelle</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="formGroupExampleInput" class="form-label">Şarkı Adı</label>
+                    <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Şarkı Adı" name="title" value="{{ track.title }}">
+                </div>
+                <div class="mb-3">
+                    <label for="formGroupExampleInput" class="form-label">Sanatçı</label>
+                    <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Sanatçı" name="artist" value="{{ track.artist }}">
+                </div>
+                <div class="mb-3">
+                    <label for="formGroupExampleInput" class="form-label">Süre</label>
+                    <input type="number" class="form-control" id="formGroupExampleInput" placeholder="Süre" name="duration" value="{{ track.duration }}">
+                </div>
+                <div class="mb-3">
+                    <label for="formGroupExampleInput" class="form-label">Son Dinleme</label>
+                    <input type="date" class="form-control" id="formGroupExampleInput" placeholder="Son Dinleme" name="last_play" value="{{ track.last_play }}">
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+              <input type="hidden" name="track_id" value="{{ track.id }}">
+              <button type="submit" class="btn btn-primary" name="updatetrack" value="trackupdate">Güncelle</button>
+            </div>
+          </div>
+        </div>
+      </div>
+  </form>
+            {% endfor %}
+                
+        </div>
+    </div>
+
+    <!-- Şarkı Ekleme Modal -->
+  <form method="post">
+    {% csrf_token %}
+    <div class="modal fade" id="addtrack" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">Şarkı Ekle</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="formGroupExampleInput" class="form-label">Şarkı Adı</label>
+                    <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Şarkı Adı" name="title">
+                </div>
+                <div class="mb-3">
+                    <label for="formGroupExampleInput" class="form-label">Sanatçı</label>
+                    <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Sanatçı" name="artist">
+                </div>
+                <div class="mb-3">
+                    <label for="formGroupExampleInput" class="form-label">Süre</label>
+                    <input type="number" class="form-control" id="formGroupExampleInput" placeholder="Süre" name="duration">
+                </div>
+                <div class="mb-3">
+                    <label for="formGroupExampleInput" class="form-label">Son Dinleme</label>
+                    <input type="date" class="form-control" id="formGroupExampleInput" placeholder="Son Dinleme" name="last_play">
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+              <button type="submit" class="btn btn-primary" name="addtrack" value="trackadd">Ekle</button>
+            </div>
+          </div>
+        </div>
+      </div>
+  </form>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
 </html>
