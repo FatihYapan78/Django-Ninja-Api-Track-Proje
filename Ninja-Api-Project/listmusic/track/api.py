@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from ninja import NinjaAPI, ModelSchema, Schema
-from typing import List
+from typing import List, Optional
 from .models import *
 
 api = NinjaAPI()
@@ -14,12 +14,15 @@ class NotFoundSchema(Schema):
     message : str
 
 
-@api.get("/tracks", response=List[TrackSchema])
-def tracks(request):
-    return Track.objects.all()
+@api.get("/all-tracks", response=List[TrackSchema])
+def tracks(request,title=None):
+    if title:
+        return Track.objects.filter(title__icontains=title)
+    else:
+        return Track.objects.all()
 
 
-@api.get("/tracks/{track_id}",response={200:TrackSchema,404:NotFoundSchema})
+@api.get("/get-tracks/{track_id}",response={200:TrackSchema,404:NotFoundSchema})
 def track(request,track_id:int):
     try:
         track = Track.objects.get(id=track_id)
@@ -28,12 +31,12 @@ def track(request,track_id:int):
         return 404, {"message":"Şarkı Bulunamadı."}
 
 
-@api.post("/tracks", response={201:TrackSchema})
+@api.post("/add-tracks", response={201:TrackSchema})
 def create_track(request,track:TrackSchema):
     track = Track.objects.create(**track.dict())
     return track
 
-@api.put("/tracks/{track_id}", response={200:TrackSchema,404:NotFoundSchema})
+@api.put("/update-tracks/{track_id}", response={200:TrackSchema,404:NotFoundSchema})
 def update_track(request,track_id:int,data:TrackSchema):
     print("data",data)
     try:
@@ -45,7 +48,7 @@ def update_track(request,track_id:int,data:TrackSchema):
     except Track.DoesNotExist:
         return 404, {"message":"Şarkı Bulunamadı."}
 
-@api.delete("/tracks/{track_id}",response={404:NotFoundSchema})
+@api.delete("/delete-tracks/{track_id}",response={404:NotFoundSchema})
 def delete_track(request,track_id:int):
     try:
         track = Track.objects.get(id=track_id)

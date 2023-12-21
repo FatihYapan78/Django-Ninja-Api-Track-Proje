@@ -11,7 +11,11 @@
     <div class="container">
         <div class="row">
             <h1 class="text-center">Şarkılar</h1>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addtrack">Şarkı Ekle</button>
+            <form class="d-flex" role="search" method="GET">
+              <input class="form-control me-2" name="query" type="search" placeholder="Search" aria-label="Search">
+              <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+            <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#addtrack">Şarkı Ekle</button>
             {% for track in tracks %}
                 <div class="col mt-5">
                     <div class="card" style="width: 100%;">
